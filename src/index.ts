@@ -1,6 +1,7 @@
 import { serve } from '@hono/node-server'
 import { execFile } from 'node:child_process'
 import { existsSync } from 'node:fs'
+import { platform } from 'node:os'
 import { mkdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { promisify } from 'node:util'
 import { Hono } from 'hono'
@@ -215,7 +216,7 @@ async function startClient(): Promise<void> {
     authStrategy: new LocalAuth({ dataPath: config.authDataPath }),
     puppeteer: {
       headless: true,
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium',
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || (platform() === 'win32' ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe' : '/usr/bin/chromium'),
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
