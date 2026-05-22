@@ -1,0 +1,7 @@
+name = "wa-runtime-proxy"
+main = "wa-runtime-proxy-worker.js"
+compatibility_date = "2026-05-22"
+account_id = "99ce5fef22626a0cb6328c214b8bae3f"
+routes = [
+  { pattern = "wa-runtime.buseldata.com/*", zone_name = "buseldata.com" }
+]

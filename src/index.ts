@@ -238,9 +238,8 @@ async function startClient(): Promise<void> {
         '--no-first-run',
         '--no-default-browser-check',
         '--js-flags=--max-old-space-size=128',
-        '--single-process',
-        '--no-zygote',
         `--disk-cache-dir=${config.cachePath}`,
+        `--user-data-dir=${config.cachePath}\\chrome-profile`,
       ],
     },
   })
