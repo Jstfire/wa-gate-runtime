@@ -3,3 +3,25 @@ node_modules
 .wwebjs_cache
 .env
 *.log
+
+data/
+*.local
+PUBLIC_URL.txt
+QR_HELPER_URL.txt
+WA_QR.html
+WA_QR.png
+cfquick-*/
+test-public/
+
+# Local Windows runtime helpers generated per host
+*-hidden.vbs
+start-*.ps1
+auto-update*.ps1
+watchdog.ps1
+create-tasks*.ps1
+create-tasks*.bat
+elevated-setup.ps1
+install-service-admin.ps1
+export-qr.mjs
+print-qr.mjs
+qr-helper.mjs
