@@ -83,6 +83,18 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+async function withTimeout<T>(promise: Promise<T>, timeoutMs: number, label: string): Promise<T> {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error(`${label} timeout after ${timeoutMs / 1000}s`)), timeoutMs)
+  })
+  try {
+    return await Promise.race([promise, timeout])
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId)
+  }
+}
+
 function calculateTypingMs(messageLength: number): number {
   const charsPerSecond = 3.3 + Math.random() * 1.7
   const baseMs = (messageLength / charsPerSecond) * 1000
@@ -259,19 +271,20 @@ async function sendHumanLike(to: string, message: string, simulateTyping: boolea
   let microDelayMs = 0
 
   if (simulateTyping) {
-    const chat = await client.getChatById(chatId)
-    typingMs = calculateTypingMs(message.length)
+    const chat = await withTimeout(client.getChatById(chatId), 8_000, 'getChatById')
+    typingMs = Math.min(calculateTypingMs(message.length), 8_000)
+    await withTimeout(chat.sendStateTyping(), 5_000, 'sendStateTyping')
     try {
-      await chat.sendStateTyping()
       await sleep(typingMs)
     } finally {
-      await chat.clearState()
+      await withTimeout(chat.clearState().catch(() => undefined), 5_000, 'clearState').catch(() => undefined)
     }
-    microDelayMs = Math.floor(1000 + Math.random() * 2000)
+    microDelayMs = 500 + Math.round(Math.random() * 1000)
     await sleep(microDelayMs)
   }
 
-  const sent = await client.sendMessage(chatId, message)
+  const sent = await withTimeout(client.sendMessage(chatId, message), 25_000, 'sendMessage')
+
   return {
     chatId,
     messageId: sent?.id?.id ?? null,
