@@ -1,7 +1,6 @@
 FROM oven/bun:1.2.23-slim
 
 ENV NODE_ENV=production \
-    NODE_OPTIONS=--max-old-space-size=128 \
     PUPPETEER_SKIP_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 
